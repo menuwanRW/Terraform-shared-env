@@ -1,0 +1,14 @@
+```bash
+# 0. Tests
+cd app && npm ci && npm test
+
+# 1. Bootstrap (once per account; local state)
+cd bootstrap && terraform init && terraform apply -var github_repo=OWNER/REPO
+#   -> note outputs; put bucket/kms/region into envs/*/backend.hcl; set GitHub variables from ci_role_arns
+
+# 2. Push a first image (run the "cd" workflow's build job, or build/push manually), then set container_image
+# 3. Environments
+cd envs/dev && terraform init -backend-config=backend.hcl && terraform apply
+cd envs/prod && terraform init -backend-config=backend.hcl && terraform apply
+# 4. From here, merging app changes to main deploys automatically (dev) and with approval (prod).
+```

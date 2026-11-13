@@ -1,0 +1,2 @@
+bootstrap/  - state bucket, ECR, GitHub OIDC roles; applied once per account
+envs/dev, envs/prod  - thin stacks that compose the modules with different knobs

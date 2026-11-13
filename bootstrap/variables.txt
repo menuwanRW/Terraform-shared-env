@@ -1,0 +1,20 @@
+variable "project" {
+  description = "Short project name; prefixes every resource."
+  type        = string
+  default     = "acme-app"
+}
+
+variable "region" {
+  type    = string
+  default = "ap-south-1"
+}
+
+variable "github_repo" {
+  description = "owner/repo allowed to assume the CI roles."
+  type        = string
+}
+
+variable "environments" {
+  type    = list(string)
+  default = ["dev", "prod"]
+}

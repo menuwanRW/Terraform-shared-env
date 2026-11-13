@@ -1,0 +1,15 @@
+S3 with native lockfile -One fewer resource, same safety, versioned and KMS-encrypted (Needs Terraform >= 1.10/1.11 )
+
+State is split **per environment** (separate keys; separate roles possible) so a bad `apply` in dev cannot corrupt prod
+state. The bucket is versioned (recover from corruption), KMS-encrypted, blocks public access, denies non-TLS, and
+has `prevent_destroy`. State can contain secrets, which is why it's encrypted with a CMK and reads are IAM-scoped.
+
+NOTE - 
+**Bootstrap problem:** the state bucket can't live in the state it holds. `bootstrap/` is applied once with local
+state, which is a deliberate, documented exception. (In a real org this lives in a locked-down platform account.)
+
+The ECS service has `ignore_changes = [task_definition, desired_count]`.
+
+- Terraform owns the *shape* (roles, networking, sizing), CI owns the *running version* via new task
+  definition revisions. Cost: drift between `container_image` in tfvars and reality is expected; the tfvars value is just
+  a bootstrap. The deploy role can do almost nothing except update one service.
